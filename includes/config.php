@@ -42,5 +42,11 @@ define("emailBody", '<p>Our records show that your Library Card will be expiring
   <p>&nbsp;</p>
     </body>');
 
+define("emailBody_2", "<p> Please visit the branch nearest to you to renew your card</p>
+      <p>If you have any questions please call us at (905) 875-2665</p>
+      <p>Thank-you</p><p>&nbsp;</p></body>");
+
+
+
 
 ?>
