@@ -118,6 +118,8 @@ foreach ($patronIdArray as $thisId) {
 
     $emailBody = "Dear " . $first_name_no_init . ",";
     $emailBody .= emailBody;
+    $emailBody .= "According to our records, your Library card will expire on: " . $expirationDate;
+    $emailBody .= emailBody_2;
 
     //send email - if you want to test this out and not actually email patrons
     //replace $email with your own email address in ''s   ie.  'chris.jasztrab@mpl.on.ca'
