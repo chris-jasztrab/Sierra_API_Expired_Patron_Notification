@@ -24,7 +24,7 @@ define("apiKey", "API_KEY_FROM_III");
 define("apiSecret", "YOUR_API_SECRET");
 
 // Number of results you want to use.  Best to have it a large number so all expired patrons get emailed.
-define("numberOfResults", "10");
+define("numberOfResults", "10000");
 
 // For future development - No need to change at this time
 define("resultOffset", "0");

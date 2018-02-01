@@ -119,9 +119,10 @@ foreach ($patronIdArray as $thisId) {
     $emailBody = "Dear " . $first_name_no_init . ",";
     $emailBody .= emailBody;
 
-    //send email
+    //send email - if you want to test this out and not actually email patrons
+    //replace $email with your own email address in ''s   ie.  'chris.jasztrab@mpl.on.ca'
 
-    mail("chris.jasztrab@gmail.com",mailSubject,$emailBody,$email_headers);
+    mail($email,mailSubject,$emailBody,$email_headers);
 
 }
 
