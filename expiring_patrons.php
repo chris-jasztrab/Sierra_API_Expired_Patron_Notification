@@ -106,17 +106,31 @@ foreach ($patronIdArray as $thisId) {
     echo "<br />";
     $count = $count + 1;
 
-    //isolate the persons first name from the string
-    $first_name = substr($name, strpos($name, ',') + 1);
-    $lastSpace = strrpos($first_name," ");
-    $first_name_no_init = substr($first_name, 0, $lastSpace);
+    //You might have a middle initial in the names, this will parse
+    //so we only get the first and last names
+
+    // explod out the patron name so the last name and first name are separate
+    // if the patron has a middle initial it will be in the first name at this point
+    $patron_names = explode(',', $name);
+
+    // set the $last_name variable to be the last name (first item in the exploded array)
+    $last_name = $patron_names[0];
+
+    //set the rest of the exploded array to a different variable so we can parse it
+    $first_name_init = $patron_names[1];
+
+    //explode this so we can isolate the first name from a middle initial if there is one
+    $first_name_and_initial = explode(" ", $first_name_init);
+
+    //set the $first_name variable from the exploded array
+    $first_name = $first_name_and_initial[1];
 
     //create the email to send to the patron
     $email_headers  = 'MIME-Version: 1.0' . "\r\n";
     $email_headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
     $email_headers .= 'From: ' . mailFrom . "\r\n";
 
-    $emailBody = "Dear " . $first_name_no_init . ",";
+    $emailBody = "Dear " . $first_name . ",";
     $emailBody .= emailBody;
     $emailBody .= "According to our records, your Library card will expire on: " . $expirationDate;
     $emailBody .= emailBody_2;
