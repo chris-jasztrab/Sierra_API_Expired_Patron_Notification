@@ -1,4 +1,4 @@
-<?php
+<?php<?php
 //include our functions file
 include('includes/functions.php');
 
@@ -11,6 +11,9 @@ $today              = strtotime('today');
 $yesterday          = date('Y-m-d', strtotime('-1 day', $today));
 $firstDayOfNextMonth = date("Y-m-d", strtotime("first day of next month midnight"));
 $lastDayOfNextMonth = date("Y-m-d", strtotime("last day of next month midnight"));
+$thirtydaysfromtoday = date('Y-m-d',strtotime('+30 days',$today));
+$threeWeeksAfterThisWeekStart = date('Y-m-d',strtotime('28 days',strtotime('monday this week')));
+$threeWeeksAfterThisWeekEnd = date('Y-m-d',strtotime('34 days',strtotime('monday this week')));
 
 //json query built from Sierra Create Lists that gets a list of expiring patrons
 //that will expire the next month.
@@ -27,8 +30,8 @@ $query_string = '{
         {
           "op": "between",
           "operands": [
-            "' . $firstDayOfNextMonth . '",
-            "' . $lastDayOfNextMonth . '"
+            "' . $threeWeeksAfterThisWeekStart . '",
+            "' . $threeWeeksAfterThisWeekEnd . '"
           ]
         }
       ]
@@ -37,7 +40,7 @@ $query_string = '{
 }';
 
 
-echo "Showing records for patrons who are expiring between " . $firstDayOfNextMonth . " and " . $lastDayOfNextMonth;
+echo "Showing records for patrons who are expiring between " . $threeWeeksAfterThisWeekStart . " and " . $threeWeeksAfterThisWeekEnd;
 echo "<br />";
 
 //uri that is unique to your Sierra environment to do a patron query
@@ -99,38 +102,85 @@ foreach ($patronIdArray as $thisId) {
       $email = $patron_detail['emails'][0];
     }
     $barcode = $patron_detail['barcodes'][0];
+    $expirationDate = $patron_detail['expirationDate'];
 
     //echo out the info to the screen
-    echo $count . " ";
-    echo "ID: " . $barcode . " Name: " . $name . " Email: " . $email;
-    echo "<br />";
-    $count = $count + 1;
+    //echo $count . " ";
+    //echo "ID: " . $barcode . " Name: " . $name . " Email: " . $email;
+    //echo "<br />";
+    //$count = $count + 1;
+
 
     //You might have a middle initial in the names, this will parse
     //so we only get the first and last names
+    //also need to check that the name contains a comma or if staff forgot
+    //and deal with it accordingly
 
-    // explod out the patron name so the last name and first name are separate
-    // if the patron has a middle initial it will be in the first name at this point
-    $patron_names = explode(',', $name);
+    $isThereAComma = strpos($name, ',');
+    if($isThereAComma == true)
+    {
 
-    // set the $last_name variable to be the last name (first item in the exploded array)
-    $last_name = $patron_names[0];
+      // explode out the patron name so the last name and first name are separate
+      // if the patron has a middle initial it will be in the first name at this point
+      $patron_names = explode(',', $name);
 
-    //set the rest of the exploded array to a different variable so we can parse it
-    $first_name_init = $patron_names[1];
+      // set the $last_name variable to be the last name (first item in the exploded array)
+      $last_name = $patron_names[0];
 
-    //explode this so we can isolate the first name from a middle initial if there is one
-    $first_name_and_initial = explode(" ", $first_name_init);
+      //set the rest of the exploded array to a different variable so we can parse it
+      $first_name_init = $patron_names[1];
 
-    //set the $first_name variable from the exploded array
-    $first_name = $first_name_and_initial[1];
+      //explode this so we can isolate the first name from a middle initial if there is one
+      $first_name_and_initial = explode(" ", $first_name_init);
+
+      //set the $first_name variable from the exploded array - This is in all capitals at this point
+      $first_name = $first_name_and_initial[1];
+
+      //make it all lowercase
+      $first_name_lower = strtolower($first_name);
+
+      //capitalize the first letter
+      $first_name_proper = ucfirst($first_name_lower);
+
+      //echo out the info to the screen
+      echo $count . " ";
+      echo "ID: " . $barcode . " Full Name: " . $name . " First Name: " . $first_name_proper . " Email: " . $email;
+      echo "<br />";
+      $count = $count + 1;
+
+    }
+
+    if($isThereAComma == false)
+    {
+      // staff forgot to put the comma in the name
+      $patron_names = explode(' ', $name);
+
+      // set the $last_name variable to be the last name (first item in the exploded array)
+      $last_name = $patron_names[0];
+
+      // set the $first_name to the next item in the exploded array
+      $first_name = $patron_names[1];
+
+      // make the first name all lower case
+      $first_name_lower = strtolower($first_name);
+      
+      // capitalize the first letter
+      $first_name_proper = ucfirst($first_name_lower);
+
+      echo $count . " ";
+      echo "ID: " . $barcode . " Full Name: " . $name . " First Name: " . $first_name_proper . " Email: " . $email;
+      echo "<br />";
+      $count = $count + 1;
+
+    }
+
 
     //create the email to send to the patron
     $email_headers  = 'MIME-Version: 1.0' . "\r\n";
     $email_headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
     $email_headers .= 'From: ' . mailFrom . "\r\n";
 
-    $emailBody = "Dear " . $first_name . ",";
+    $emailBody = "Dear " . $first_name_proper . ",";
     $emailBody .= emailBody;
     $emailBody .= "According to our records, your Library card will expire on: " . $expirationDate;
     $emailBody .= emailBody_2;
