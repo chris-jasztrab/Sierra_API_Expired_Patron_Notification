@@ -46,6 +46,15 @@ define("emailBody_2", "<p> Please visit the branch nearest to you to renew your 
       <p>If you have any questions please call us at (905) 875-2665</p>
       <p>Thank-you</p><p>&nbsp;</p></body>");
 
+//set the following variable to 1 if you want CC emails sent 0 if you dont.
+define("sendCCEmail", "1");
+
+// the following line if you want to send a CC of all emails to a different email
+//this is useful if you have a mailbox that you use to keep track of these types of $email_headers
+
+ define("ccAddress", "notices@library.ca");
+
+
 
 
 
