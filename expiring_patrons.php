@@ -1,4 +1,4 @@
-<?php<?php
+<?php
 //include our functions file
 include('includes/functions.php');
 
@@ -14,6 +14,8 @@ $lastDayOfNextMonth = date("Y-m-d", strtotime("last day of next month midnight")
 $thirtydaysfromtoday = date('Y-m-d',strtotime('+30 days',$today));
 $threeWeeksAfterThisWeekStart = date('Y-m-d',strtotime('28 days',strtotime('monday this week')));
 $threeWeeksAfterThisWeekEnd = date('Y-m-d',strtotime('34 days',strtotime('monday this week')));
+
+$patronsEmailed = array();
 
 //json query built from Sierra Create Lists that gets a list of expiring patrons
 //that will expire the next month.
@@ -143,37 +145,37 @@ foreach ($patronIdArray as $thisId) {
       $first_name_proper = ucfirst($first_name_lower);
 
       //echo out the info to the screen
-      echo $count . " ";
-      echo "ID: " . $barcode . " Full Name: " . $name . " First Name: " . $first_name_proper . " Email: " . $email;
+
+      $infoDisplay = $count . " " . "ID: " . $barcode . " Full Name: " . $name . " Expiration Date: " . $expirationDate . " Email: " . $email;
+      echo $infoDisplay;
       echo "<br />";
       $count = $count + 1;
+      array_push($patronsEmailed, $infoDisplay);
+
 
     }
 
     if($isThereAComma == false)
     {
+
       // staff forgot to put the comma in the name
       $patron_names = explode(' ', $name);
 
       // set the $last_name variable to be the last name (first item in the exploded array)
       $last_name = $patron_names[0];
-
       // set the $first_name to the next item in the exploded array
       $first_name = $patron_names[1];
-
       // make the first name all lower case
       $first_name_lower = strtolower($first_name);
-
       // capitalize the first letter
       $first_name_proper = ucfirst($first_name_lower);
 
-      echo $count . " ";
-      echo "ID: " . $barcode . " Full Name: " . $name . " First Name: " . $first_name_proper . " Email: " . $email;
+      $infoDisplay = $count . " " . "ID: " . $barcode . " Full Name: " . $name . " Expiration Date: " . $expirationDate . " Email: " . $email;
+      echo $infoDisplay;
       echo "<br />";
       $count = $count + 1;
-
+      array_push($patronsEmailed, $infoDisplay);
     }
-
 
     //create the email to send to the patron
     $email_headers  = 'MIME-Version: 1.0' . "\r\n";
@@ -181,7 +183,7 @@ foreach ($patronIdArray as $thisId) {
     $email_headers .= 'From: ' . mailFrom . "\r\n";
     if(sendCCEmail == 1)
     {
-      $email_headers .= 'CC: notices@mpl.on.ca';
+      $email_headers .= 'CC: '. ccAddress;
     }
 
     $emailBody = "Dear " . $first_name_proper . ",";
@@ -194,7 +196,27 @@ foreach ($patronIdArray as $thisId) {
 
     mail($email,mailSubject,$emailBody,$email_headers);
 
-}
+    // send a summary email to the administrator for review
+    }
 
+    $summary_email_headers  = 'MIME-Version: 1.0' . "\r\n";
+    $summary_email_headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+    $summary_email_headers .= 'From: ' . mailFrom . "\r\n";
+    $summary_email_headers .= 'CC: ' . summaryEmailAddress;
 
+    $summaryEmail = "Here is a summary of the patrons emailed letting them know that their card is expiring";
+    $summaryEmail .= "<br />";
+    $summaryEmail .= "<br />";
+    $summaryEmail .= "Date Range Used: " . $threeWeeksAfterThisWeekStart . " and " . $threeWeeksAfterThisWeekEnd;
+    $summaryEmail .= "<br />";
+    $summaryEmail .= "<br />";
+    foreach ($patronsEmailed as $detail)
+    {
+      $summaryEmail .= $detail . "<br />";
+    }
+
+  if(sendSummaryEmail == 1)
+  {
+    mail(summaryEmailAddress,"Patron Expiration Email Notification Summary",$summaryEmail,$summary_email_headers);
+  }
 ?>
