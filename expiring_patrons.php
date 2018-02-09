@@ -163,7 +163,7 @@ foreach ($patronIdArray as $thisId) {
 
       // make the first name all lower case
       $first_name_lower = strtolower($first_name);
-      
+
       // capitalize the first letter
       $first_name_proper = ucfirst($first_name_lower);
 
@@ -179,6 +179,10 @@ foreach ($patronIdArray as $thisId) {
     $email_headers  = 'MIME-Version: 1.0' . "\r\n";
     $email_headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
     $email_headers .= 'From: ' . mailFrom . "\r\n";
+    if(sendCCEmail == 1)
+    {
+      $email_headers .= 'CC: notices@mpl.on.ca';
+    }
 
     $emailBody = "Dear " . $first_name_proper . ",";
     $emailBody .= emailBody;
