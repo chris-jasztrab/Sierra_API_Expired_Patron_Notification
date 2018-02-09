@@ -11,7 +11,7 @@ function getPatron($patronID) {
     $uri .= apiVer;
     $uri .= '/patrons/';
     $uri .= $patronID;
-    $uri .= '?fields=names,emails,barcodes';
+    $uri .= '?fields=names,emails,barcodes,expirationDate';
 
     $apiToken = getCurrentApiAccessToken();
 
