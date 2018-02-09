@@ -54,6 +54,11 @@ define("sendCCEmail", "1");
 
  define("ccAddress", "notices@library.ca");
 
+ //set the following variable to 1 if you want a summary emails sent 0 if you dont.
+ define("sendSummaryEmail", "1");
+
+ //set this to the email address you want your summary emails to be sent to
+define("summaryEmailAddress", "administrator@library.ca");
 
 
 
