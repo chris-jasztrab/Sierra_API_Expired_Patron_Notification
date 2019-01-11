@@ -193,8 +193,12 @@ foreach ($patronIdArray as $thisId) {
 
     //send email - if you want to test this out and not actually email patrons
     //replace $email with your own email address in ''s   ie.  'chris.jasztrab@mpl.on.ca'
-
-    mail($email,mailSubject,$emailBody,$email_headers);
+    
+    //Don't try to send emails to people who don't actually have an email
+    if(!isset($email))
+    {
+      mail($email,mailSubject,$emailBody,$email_headers);
+    }
 
     // send a summary email to the administrator for review
     }
